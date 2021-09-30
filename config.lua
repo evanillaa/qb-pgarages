@@ -1,5 +1,16 @@
 Config = {}
 
-Config.PedLocations = { -- NPC Spawn Location(s).
-    {coords = vector4(441.41162, -974.6804, 24.699926, 172.08871)},
+Config.PedLocations = {
+	["vehicle"] = {
+		[1] = vector4(448.159, -1017.41, 28.562, 90.654),
+		[2] = vector4(471.13, -1024.05, 28.17, 274.5),
+		[3] = vector4(-455.39, 6002.02, 31.34, 87.93),
+	},
+}
+
+Config.ParkSpots = {
+	["spot"] = {
+		[1] = vector4(448.159, -1017.41, 28.562, 90.654),
+		[2] = vector4(451.83, -1024.98, 28.54, 2.21),
+	},
 }
