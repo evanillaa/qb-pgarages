@@ -1,5 +1,6 @@
 local PlayerData = {}
 local pedspawned = false
+local currentGarage = 1
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded")
 AddEventHandler("QBCore:Client:OnPlayerLoaded",function()
@@ -20,7 +21,8 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(1000)
 		for k, v in pairs(Config.PedLocations) do
-			local pos = GetEntityCoords(PlayerPedId())
+			local ped = PlayerPedId()
+			local pos = GetEntityCoords(ped)
 			local dist = #(v.coords - pos)
 
 			if dist < 35 and not pedspawned then
@@ -37,6 +39,7 @@ end)
 RegisterNetEvent("pgarages:spawn:ped")
 AddEventHandler("pgarages:spawn:ped",function(coords)
 	local hash = `ig_trafficwarden`
+	
 	RequestModel(hash)
 	while not HasModelLoaded(hash) do
 		Wait(10)
@@ -59,13 +62,15 @@ end
 
 RegisterNetEvent("pgarages:client:garage")
 AddEventHandler("pgarages:client:garage",function(pd)
+	local ped = PlayerPedId()
 	local vehicle = pd.vehicle
-	local coords = vector4(458.95, -993.23, 25.377454, 0)
+	local coords = Config.ParkSpots["vehicle"][currentGarage]
+	
 	QBCore.Functions.SpawnVehicle(vehicle,function(veh)
-		SetVehicleNumberPlateText(veh, "ZULU" .. tostring(math.random(1000, 9999)))
+		SetVehicleNumberPlateText(veh, "ZULU" .. GetRandomIntInRange(1000, 9999))
 		exports["LegacyFuel"]:SetFuel(veh, 100.0)
 		SetEntityHeading(veh, coords.w)
-		TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+		TaskWarpPedIntoVehicle(ped, veh, -1)
 		TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
 		SetVehicleEngineOn(veh, true, true)
 	end,
@@ -74,8 +79,10 @@ end)
 
 RegisterNetEvent("pgarages:client:storecar")
 AddEventHandler("pgarages:client:storecar",function()
+	local ped = PlayerPedId()
+	
 	QBCore.Functions.Notify("Vehicle Stored!")
-	local car = GetVehiclePedIsIn(PlayerPedId(), true)
+	local car = GetVehiclePedIsIn(ped, true)
 	NetworkFadeOutEntity(car, true, false)
 	Citizen.Wait(2000)
 	QBCore.Functions.DeleteVehicle(car)
